@@ -1,0 +1,98 @@
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Tunnel12
+ ip address 192.168.12.1 255.255.255.0
+ mtu 1476
+ tunnel source GigabitEthernet0/0/0
+ tunnel destination 100.0.3.2
+!
+!
+interface GigabitEthernet0/0/0
+ ip address 100.0.1.2 255.255.255.0
+ ip nat outside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1
+ ip address 172.16.13.1 255.255.255.0
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/2
+ ip address 172.16.14.1 255.255.255.0
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 0.0.0.1
+ log-adjacency-changes
+ network 172.16.13.0 0.0.0.255 area 0
+ network 172.16.14.0 0.0.0.255 area 0
+ default-information originate
+!
+ip nat inside source list 1 interface GigabitEthernet0/0/0 overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 100.0.1.1 
+ip route 10.0.0.0 255.255.0.0 192.168.12.2 
+!
+ip flow-export version 9
+!
+!
+access-list 1 permit any
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
